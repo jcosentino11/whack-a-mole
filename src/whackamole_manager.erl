@@ -15,9 +15,10 @@ spawn_game_manager() ->
 game_manager(GamePids) ->
     receive
         {player_ready, #player{} = Player} ->
-            UpdatedGamePids = add_player(Player, GamePids),
-            start_games(UpdatedGamePids),
-            game_manager(UpdatedGamePids)
+            GamePids2 = cleanup_pids(GamePids),
+            GamePids3 = add_player(Player, GamePids2),
+            start_games(GamePids3),
+            game_manager(GamePids3)
     end.
 
 add_player(#player{} = Player, GamePid) when is_pid(GamePid) ->
@@ -55,6 +56,5 @@ start_games([GamePid | Rest]) ->
             end
     end.
 
-% TODO
-% reap(GamePids) ->
-%     ok.
+cleanup_pids(GamePids) ->
+    [GamePid || GamePid <- GamePids, is_process_alive(GamePid)].
