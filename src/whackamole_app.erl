@@ -12,6 +12,7 @@ start(_StartType, _StartArgs) ->
 			{"/server", whackamole_server, []}
 		]}
 	]),
+    whackamole_manager:spawn_game_manager(),
     {ok, _} = cowboy:start_clear(http, [{port, 8080}], #{
 		env => #{dispatch => Dispatch}
 	}),
