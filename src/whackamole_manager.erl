@@ -25,12 +25,14 @@ add_player(#player{} = Player, GamePid) when is_pid(GamePid) ->
     case is_process_alive(GamePid) of
         true ->
             GamePid ! {add_player, Player, self()},
-            receive % TODO tiemout
+            receive
                 full ->
                     GamePid2 = whackamole_game:spawn_game(),
                     add_player(Player, GamePid2) ++ [GamePid];
                 _ ->
                     [GamePid]
+                after 1000 -> % game process doesn't exist anymore
+                    ok
             end;
         false ->
             GamePid2 = whackamole_game:spawn_game(),
@@ -48,10 +50,12 @@ start_games([GamePid | Rest]) ->
     GamePid ! {start_game, self()},
     case is_process_alive(GamePid) of
         true ->
-            receive % TODO timeout
+            receive
                 ok ->
                     start_games(Rest);
                 error ->
+                    ok
+                after 1000 -> % game process doesn't exist anymore
                     ok
             end
     end.
