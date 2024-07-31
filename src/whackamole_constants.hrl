@@ -6,4 +6,4 @@
 -define(BOARD_SIZE, 25). % 5 x 5
 
 -record(player, {websocket_id, player_id, board}).
--record(game, {game_id, players, required_player_count, started, duration, board_size}).
+-record(game, {game_id, state, players, required_player_count, duration, board_size}).
