@@ -23,11 +23,9 @@ websocket_handle(_Data, State) ->
     {[], State, hibernate}.
 
 websocket_info({player_id, PlayerId}, State) ->
-    io:format("player id set: ~p~n", [PlayerId]),
     UpdatedState = State#ws_state{player_id = PlayerId},
     {[], UpdatedState};
 websocket_info({game_id, GameId}, State) ->
-    io:format("game id set: ~p~n", [GameId]),
     UpdatedState = State#ws_state{game_id = GameId},
     {[], UpdatedState};
 websocket_info(#game{} = Game, #ws_state{player_id = PlayerId} = State) ->
