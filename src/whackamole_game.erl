@@ -107,7 +107,9 @@ hit(#game{players = Players} = Game, PlayerId, Index) ->
     UpdatedPlayers = lists:map(fun(Player) -> hit(Player, PlayerId, Index) end, Players),
     UpdatedGame = Game#game{players = UpdatedPlayers},
     UpdatedGame;
-hit(#player{board = Board, player_id = Id, score = Score} = Player, PlayerId, Index) when Id == PlayerId  ->
+hit(#player{board = Board, player_id = Id, score = Score} = Player, PlayerId, Index) when
+    Id == PlayerId
+->
     UpdatedPlayer =
         case is_hit(Board, Index) of
             true ->
@@ -116,7 +118,7 @@ hit(#player{board = Board, player_id = Id, score = Score} = Player, PlayerId, In
                 Player
         end,
     UpdatedPlayer;
-hit(Player, _PlayerId, _Index)  ->
+hit(Player, _PlayerId, _Index) ->
     Player.
 
 is_hit(Board, Index) when Index > length(Board); Index =< 1 ->

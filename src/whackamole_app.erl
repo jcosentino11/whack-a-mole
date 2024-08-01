@@ -6,16 +6,16 @@
 
 start(_StartType, _StartArgs) ->
     Dispatch = cowboy_router:compile([
-		{'_', [
+        {'_', [
             {"/", cowboy_static, {priv_file, whackamole, "index.html"}},
             {"/static/[...]", cowboy_static, {priv_dir, whackamole, "static"}},
-			{"/server", whackamole_server, []}
-		]}
-	]),
+            {"/server", whackamole_server, []}
+        ]}
+    ]),
     whackamole_manager:spawn_game_manager(),
     {ok, _} = cowboy:start_clear(http, [{port, 8080}], #{
-		env => #{dispatch => Dispatch}
-	}),
+        env => #{dispatch => Dispatch}
+    }),
     whackamole_sup:start_link().
 
 stop(_State) ->

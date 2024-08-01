@@ -36,8 +36,9 @@ add_player(#player{} = Player, GamePid) when is_pid(GamePid) ->
                     add_player(Player, GamePid2) ++ [GamePid];
                 _ ->
                     [GamePid]
-                after 1000 -> % game process doesn't exist anymore
-                    ok
+                % game process doesn't exist anymore
+            after 1000 ->
+                ok
             end;
         false ->
             GamePid2 = whackamole_game:spawn_game(),
@@ -60,8 +61,9 @@ start_games([GamePid | Rest]) ->
                     start_games(Rest);
                 error ->
                     ok
-                after 1000 -> % game process doesn't exist anymore
-                    ok
+                % game process doesn't exist anymore
+            after 1000 ->
+                ok
             end
     end.
 
