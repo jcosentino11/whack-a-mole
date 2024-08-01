@@ -19,10 +19,6 @@ websocket_init(_State) ->
 websocket_handle({text, <<"ready">>}, #ws_state{websocket_id = WebsocketId} = State) ->
     whackamole_manager:player_ready(#player{websocket_id = WebsocketId}),
     {[], State, hibernate};
-websocket_handle({ping, _}, State) ->
-    {[], State, hibernate};
-websocket_handle({pong, _}, State) ->
-    {[], State, hibernate};
 websocket_handle(_Data, State) ->
     {[], State, hibernate}.
 
