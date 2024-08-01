@@ -2,11 +2,14 @@
 
 -include("whackamole_constants.hrl").
 
--export([player_ready/1]).
+-export([player_ready/1, hit/3]).
 -export([spawn_game_manager/0, game_manager/1]).
 
 player_ready(#player{websocket_id = _} = Player) ->
     ?GAME_MANAGER ! {player_ready, Player}.
+
+hit(GameId, PlayerId, Index) ->
+    ?GAME_MANAGER ! {hit, GameId, PlayerId, Index}.
 
 spawn_game_manager() ->
     Pid = spawn(?MODULE, game_manager, [[]]),
@@ -18,7 +21,9 @@ game_manager(GamePids) ->
             GamePids2 = cleanup_pids(GamePids),
             GamePids3 = add_player(Player, GamePids2),
             start_games(GamePids3),
-            game_manager(GamePids3)
+            game_manager(GamePids3);
+        {hit, GameId, PlayerId, Index} ->
+            GameId ! {hit, PlayerId, Index}
     end.
 
 add_player(#player{} = Player, GamePid) when is_pid(GamePid) ->

@@ -51,6 +51,16 @@ game(
                     CallerPid ! error,
                     game(GameState)
             end;
+        {hit, PlayerId, Index} ->
+            case State of
+                started ->
+                    UpdatedGameState = hit(GameState, PlayerId, Index),
+                    % TODO be smarter about notifying, this is a lot of messages flying around
+                    notify_ws(Players, UpdatedGameState),
+                    game(UpdatedGameState);
+                _ ->
+                    game(GameState)
+            end;
         game_over ->
             UpdatedGameState = GameState#game{state = over},
             notify_ws(Players, UpdatedGameState);
@@ -81,7 +91,7 @@ add_player(
     } = Game
 ) ->
     PlayerId = length(Players) + 1,
-    UpdatedPlayer = Player#player{player_id = PlayerId, board = game_board(BoardSize)},
+    UpdatedPlayer = Player#player{player_id = PlayerId, board = game_board(BoardSize), score = 0},
     UpdatedPlayers = Players ++ [UpdatedPlayer],
     UpdatedState =
         case length(UpdatedPlayers) of
@@ -92,6 +102,37 @@ add_player(
         end,
     UpdatedGame = Game#game{players = UpdatedPlayers, state = UpdatedState},
     {UpdatedPlayer, UpdatedGame}.
+
+hit(#game{players = Players} = Game, PlayerId, Index) ->
+    UpdatedPlayers = lists:map(fun(Player) -> hit(Player, PlayerId, Index) end, Players),
+    UpdatedGame = Game#game{players = UpdatedPlayers},
+    UpdatedGame;
+hit(#player{board = Board, player_id = Id, score = Score} = Player, PlayerId, Index) when Id == PlayerId  ->
+    UpdatedPlayer =
+        case is_hit(Board, Index) of
+            true ->
+                Player#player{board = clear_mole(Board, Index), score = Score + 1};
+            _ ->
+                Player
+        end,
+    UpdatedPlayer;
+hit(Player, _PlayerId, _Index)  ->
+    Player.
+
+is_hit(Board, Index) when Index > length(Board); Index =< 1 ->
+    false;
+is_hit(Board, Index) ->
+    case lists:nth(Index, Board) of
+        1 -> true;
+        _ -> false
+    end.
+
+clear_mole([_ | Rest] = _Board, Index) when Index == 1 ->
+    [0] ++ Rest;
+clear_mole(Board, Index) when Index == length(Board) ->
+    lists:sublist(Board, Index - 1) ++ [0];
+clear_mole(Board, Index) ->
+    lists:sublist(Board, Index - 1) ++ [0] ++ lists:nthtail(Index, Board).
 
 next_board(
     #game{

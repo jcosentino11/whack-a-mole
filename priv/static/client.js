@@ -4,6 +4,7 @@ const ws = new WebSocket(server);
 ws.onopen = function (evt) {
   console.log("[ws][open]: " + evt.data);
   ws.send("ready"); // TODO do this on button
+  ws.send("hit1"); // example
 };
 ws.onclose = function (evt) {
   console.log("[ws][close]: " + evt.data);

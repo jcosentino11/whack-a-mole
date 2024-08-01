@@ -19,6 +19,9 @@ websocket_init(_State) ->
 websocket_handle({text, <<"ready">>}, #ws_state{websocket_id = WebsocketId} = State) ->
     whackamole_manager:player_ready(#player{websocket_id = WebsocketId}),
     {[], State, hibernate};
+websocket_handle({text, << "hit", Index/binary >>}, #ws_state{game_id = GameId, player_id = PlayerId} = State) ->
+	whackamole_manager:hit(GameId, PlayerId, Index),
+	{[], State};
 websocket_handle(_Data, State) ->
     {[], State, hibernate}.
 
@@ -33,6 +36,8 @@ websocket_info(#game{} = Game, #ws_state{player_id = PlayerId} = State) ->
 websocket_info(_Info, State) ->
     {[], State}.
 
+% TODO remove player on disconnect if game hasn't started
+
 encode(Game, PlayerId) ->
 	CurrPlayer = [Player || #player{player_id = _PlayerId} = Player <- Game#game.players, PlayerId =:= _PlayerId],
 	OtherPlayers = [Player || #player{player_id = _PlayerId} = Player <- Game#game.players, PlayerId /= _PlayerId],
@@ -42,6 +47,7 @@ encode(Game, PlayerId) ->
             fun(Player) ->
                 #{
                     player_id => Player#player.player_id,
+					score => Player#player.score,
                     board => Player#player.board
                 }
             end,
@@ -51,6 +57,7 @@ encode(Game, PlayerId) ->
             fun(Player) ->
                 #{
                     player_id => Player#player.player_id,
+					score => Player#player.score,
                     board => Player#player.board
                 }
             end,
