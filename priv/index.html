@@ -1,6 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <link
+      rel="apple-touch-icon"
+      sizes="152x152"
+      href="/static/icons/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/static/icons/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/static/icons/favicon-16x16.png"
+    />
+    <link rel="manifest" href="/static/icons/site.webmanifest" />
+    <link
+      rel="mask-icon"
+      href="/static/icons/safari-pinned-tab.svg"
+      color="#5bbad5"
+    />
+    <link rel="shortcut icon" href="/static/icons/favicon.ico" />
+    <meta name="msapplication-TileColor" content="#da532c" />
+    <meta
+      name="msapplication-config"
+      content="/static/icons/browserconfig.xml"
+    />
+    <meta name="theme-color" content="#ffffff" />
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
@@ -8,23 +39,21 @@
       content="An online multiplayer version of whack-a-mole."
     />
     <meta name="author" content="Joseph Cosentino" />
-    <title>Whack-A-Mole</title>
 
-    <link rel="apple-touch-icon" sizes="152x152" href="/static/icons/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/static/icons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/static/icons/favicon-16x16.png">
-    <link rel="manifest" href="/static/icons/site.webmanifest">
-    <link rel="mask-icon" href="/static/icons/safari-pinned-tab.svg" color="#5bbad5">
-    <link rel="shortcut icon" href="/static/icons/favicon.ico">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="msapplication-config" content="/static/icons/browserconfig.xml">
-    <meta name="theme-color" content="#ffffff">    
+    <title>Whack-A-Mole</title>
+    <style>
+      canvas {
+        border: 1px solid black;
+      }
+    </style>
   </head>
   <body>
     <header>
       <h1>Whack-A-Mole</h1>
     </header>
     <main>
+      <canvas id="gameCanvas" width="500" height="500"></canvas>
+      <button id="startButton">Start Game</button>
     </main>
     <footer>
       <p>&copy; 2024 Joseph Cosentino</p>

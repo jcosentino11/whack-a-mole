@@ -23,7 +23,8 @@ game_manager(GamePids) ->
             start_games(GamePids3),
             game_manager(GamePids3);
         {hit, GameId, PlayerId, Index} ->
-            GameId ! {hit, PlayerId, Index}
+            GameId ! {hit, PlayerId, Index},
+            game_manager(GamePids)
     end.
 
 add_player(#player{} = Player, GamePid) when is_pid(GamePid) ->

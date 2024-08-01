@@ -22,7 +22,7 @@ websocket_handle({text, <<"ready">>}, #ws_state{websocket_id = WebsocketId} = St
 websocket_handle(
     {text, <<"hit", Index/binary>>}, #ws_state{game_id = GameId, player_id = PlayerId} = State
 ) ->
-    whackamole_manager:hit(GameId, PlayerId, Index),
+    whackamole_manager:hit(GameId, PlayerId, list_to_integer(binary:bin_to_list(Index))),
     {[], State};
 websocket_handle(_Data, State) ->
     {[], State, hibernate}.

@@ -1,7 +1,7 @@
 -define(GAME_MANAGER, game_manager).
 
--define(GAME_DURATION_MILLIS, 5000).
--define(PLAYERS_PER_GAME, 2).
+-define(GAME_DURATION_MILLIS, 10000).
+-define(PLAYERS_PER_GAME, 1).
 % 5 x 5
 -define(BOARD_SIZE, 25).
 -define(BOARD_UPDATE_INTERVAL_MILLIS, 1000).
