@@ -1,3 +1,6 @@
 # Whack-a-Mole (work in progress)
 
-A multiplayer whack-a-mole.
+[![Play Whack-a-Mole](https://badgen.net/static/Play/Whack-a-Mole/green)](https://whackamole.josephcosentino.me)
+
+An online multiplayer game of whack-a-mole.
+
