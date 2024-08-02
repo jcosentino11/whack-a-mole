@@ -9,9 +9,13 @@ let board;
 let score = 0;
 
 const server = "{{ws_proto}}://" + window.location.host + "/server";
+let state;
 let ws;
 
 const connect = () => {
+  if (ws) {
+    ws.close();
+  }
   ws = new WebSocket(server);
   ws.onmessage = (event) => {
     const gameState = JSON.parse(event.data);
@@ -20,7 +24,10 @@ const connect = () => {
   };
   ws.onopen = (_event) => {
     send("ready");
-    startButton.disabled = true;
+    enableStartButton(false);
+  };
+  ws.onclose = (_event) => {
+    enableStartButton(true);
   };
 };
 
@@ -33,6 +40,18 @@ const send = (message) => {
 const updateState = (gameState) => {
   board = gameState.player[0].board;
   score = gameState.player[0].score;
+
+  prevState = state;
+  state = gameState.state;
+  if (state != prevState) {
+    onChangedState(prevState, state);
+  }
+};
+
+const onChangedState = (old, curr) => {
+  if (curr == "over") {
+      ws.close();
+  }
 };
 
 const render = () => {
@@ -65,6 +84,10 @@ const hitMole = (x, y) => {
     send(`hit${i + 1}`);
   }
 };
+
+const enableStartButton = (enabled) => {
+  startButton.disabled = !enabled;
+}
 
 canvas.addEventListener("click", (event) => {
   const rect = canvas.getBoundingClientRect();
