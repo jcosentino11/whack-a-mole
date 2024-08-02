@@ -22,4 +22,4 @@ COPY --from=build /work/_build/prod/rel/whackamole /whackamole
 
 EXPOSE 8080
 
-CMD ["/whackamole/bin/whackamole", "console"]
+CMD ["/whackamole/bin/whackamole", "foreground"]
