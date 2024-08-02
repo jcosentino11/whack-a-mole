@@ -2,16 +2,13 @@
 
 -include("whackamole_constants.hrl").
 
--export([init/2]).
--export([websocket_init/1]).
--export([websocket_handle/2]).
--export([websocket_info/2]).
+-export([init/2, websocket_init/1, websocket_handle/2, websocket_info/2, terminate/3]).
 
 -record(ws_state, {websocket_id, player_id, game_id}).
 
 -define(MAX_FRAME_SIZE, 500 + (?PLAYERS_PER_GAME * 2 * ?BOARD_SIZE)).
 % effectively used to close the ws connection if not enough players are found for a game
--define(IDLE_TIMEOUT_MILLIS, 5000). 
+-define(IDLE_TIMEOUT_MILLIS, 5000).
 
 init(Req, State) ->
     {cowboy_websocket, Req, State, #{
@@ -43,7 +40,13 @@ websocket_info(#game{} = Game, #ws_state{player_id = PlayerId} = State) ->
 websocket_info(_Info, State) ->
     {[], State}.
 
-% TODO remove player on disconnect if game hasn't started
+terminate(_Reason, _PartialReq, #ws_state{game_id = GameId, player_id = PlayerId}) when
+    GameId /= undefined, PlayerId /= undefined
+->
+    whackamole_manager:player_left(GameId, PlayerId),
+    ok;
+terminate(_Reason, _PartialReq, _State) ->
+    ok.
 
 encode(Game, PlayerId) ->
     CurrPlayer = [

@@ -32,19 +32,20 @@ game(
                     CallerPid ! full,
                     game(GameState);
                 {#player{player_id = PlayerId} = UpdatedPlayer, UpdatedGameState} ->
+                    GameId = self(),
+                    UpdatedGameState2 = UpdatedGameState#game{game_id = GameId},
                     notify_ws([UpdatedPlayer], {player_id, PlayerId}),
+                    notify_ws(Players, {game_id, GameId}),
                     CallerPid ! ok,
-                    game(UpdatedGameState)
+                    game(UpdatedGameState2)
             end;
         {start_game, CallerPid} ->
             case State of
                 ready ->
-                    GameId = self(),
-                    UpdatedGameState = GameState#game{state = started, game_id = GameId},
-                    notify_ws(Players, {game_id, GameId}),
+                    UpdatedGameState = GameState#game{state = started},
                     notify_ws(Players, UpdatedGameState),
-                    erlang:send_after(Duration, GameId, game_over),
-                    erlang:send_after(UpdateInterval, GameId, next_board),
+                    erlang:send_after(Duration, self(), game_over),
+                    erlang:send_after(UpdateInterval, self(), next_board),
                     CallerPid ! ok,
                     game(UpdatedGameState);
                 _ ->
@@ -61,6 +62,13 @@ game(
                 _ ->
                     game(GameState)
             end;
+        {player_left, PlayerId} ->
+            #game{players = UpdatedPlayers} = UpdatedGameState = remove_player(PlayerId, GameState),
+            notify_ws(Players, UpdatedGameState),
+            case length(UpdatedPlayers) of
+                0 -> no_players_left;
+                _ -> game(UpdatedGameState)
+            end;
         game_over ->
             UpdatedGameState = GameState#game{state = over},
             notify_ws(Players, UpdatedGameState);
@@ -76,6 +84,11 @@ game(
             end
     end.
 
+add_player(
+    #player{} = _Player,
+    #game{state = State}
+) when State /= pending ->
+    full;
 add_player(
     #player{} = _Player,
     #game{players = Players, required_player_count = RequiredPlayerCount}
@@ -135,6 +148,16 @@ clear_mole(Board, Index) when Index == length(Board) ->
     lists:sublist(Board, Index - 1) ++ [0];
 clear_mole(Board, Index) ->
     lists:sublist(Board, Index - 1) ++ [0] ++ lists:nthtail(Index, Board).
+
+remove_player(
+    PlayerId,
+    #game{
+        players = Players
+    } = Game
+) ->
+    UpdatedPlayers = lists:filter(fun(Player) -> Player#player.player_id =/= PlayerId end, Players),
+    UpdatedGame = Game#game{players = UpdatedPlayers},
+    UpdatedGame.
 
 next_board(
     #game{
