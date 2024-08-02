@@ -10,10 +10,13 @@
 -record(ws_state, {websocket_id, player_id, game_id}).
 
 -define(MAX_FRAME_SIZE, 500 + (?PLAYERS_PER_GAME * 2 * ?BOARD_SIZE)).
+% effectively used to close the ws connection if not enough players are found for a game
+-define(IDLE_TIMEOUT_MILLIS, 5000). 
 
 init(Req, State) ->
-    % TODO idle timeout
-    {cowboy_websocket, Req, State, #{max_frame_size => ?MAX_FRAME_SIZE}}.
+    {cowboy_websocket, Req, State, #{
+        max_frame_size => ?MAX_FRAME_SIZE, idle_timeout => ?IDLE_TIMEOUT_MILLIS
+    }}.
 
 websocket_init(_State) ->
     {[], #ws_state{websocket_id = self()}, hibernate}.
