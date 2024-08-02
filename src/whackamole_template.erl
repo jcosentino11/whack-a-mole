@@ -14,8 +14,8 @@ template_args() ->
     #{"ws_proto" => template_args_ws_proto()}.
 
 template_args_ws_proto() ->
-    case os:getenv("REBAR_PROFILE") of
-        prod -> "wss";
+    case os:getenv("APP_ENV") of
+        "prod" -> "wss";
         _ -> "ws"
     end.
 
