@@ -9,9 +9,11 @@
 
 -record(ws_state, {websocket_id, player_id, game_id}).
 
-init(Req, Opts) ->
-    % TODO set frame size, idle timeout
-    {cowboy_websocket, Req, Opts}.
+-define(MAX_FRAME_SIZE, 500 + (?PLAYERS_PER_GAME * 2 * ?BOARD_SIZE)).
+
+init(Req, State) ->
+    % TODO idle timeout
+    {cowboy_websocket, Req, State, #{max_frame_size => ?MAX_FRAME_SIZE}}.
 
 websocket_init(_State) ->
     {[], #ws_state{websocket_id = self()}, hibernate}.
