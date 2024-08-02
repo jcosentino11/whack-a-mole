@@ -9,7 +9,8 @@ start(_StartType, _StartArgs) ->
     Dispatch = cowboy_router:compile([
         {'_', [
             {"/", cowboy_static, {priv_file, whackamole, "index.html"}},
-            {"/static/[...]", cowboy_static, {priv_dir, whackamole, "static"}},
+            {"/static/[...]", whackamole_template, {priv_dir, whackamole, "templates"}},
+            {"/icons/[...]", cowboy_static, {priv_dir, whackamole, "icons"}},
             {"/server", whackamole_server, []}
         ]}
     ]),
