@@ -8,7 +8,7 @@ const playerScore = document.getElementById("playerScore");
 let board;
 let score = 0;
 
-const server = "ws://" + window.location.host + "/server";
+const server = "wss://" + window.location.host + "/server";
 const ws = new WebSocket(server);
 ws.onmessage = (event) => {
   const gameState = JSON.parse(event.data);
