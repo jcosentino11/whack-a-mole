@@ -9,15 +9,23 @@ let board;
 let score = 0;
 
 const server = "{{ws_proto}}://" + window.location.host + "/server";
-const ws = new WebSocket(server);
-ws.onmessage = (event) => {
-  const gameState = JSON.parse(event.data);
-  updateState(gameState);
-  render();
+let ws;
+
+const connect = () => {
+  ws = new WebSocket(server);
+  ws.onmessage = (event) => {
+    const gameState = JSON.parse(event.data);
+    updateState(gameState);
+    render();
+  };
+  ws.onopen = (_event) => {
+    send("ready");
+    startButton.disabled = true;
+  };
 };
 
 const send = (message) => {
-  if (message && ws.readyState == WebSocket.OPEN) {
+  if (message && ws && ws.readyState == WebSocket.OPEN) {
     ws.send(message);
   }
 };
@@ -51,19 +59,17 @@ const renderScore = () => {
   ctx.fillText(`Score: ${score}`, 10, 10);
 };
 
-const handleMoleClick = (event) => {
-  const rect = canvas.getBoundingClientRect();
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
+const hitMole = (x, y) => {
   const i = Math.floor(x / cellSize) + Math.floor(y / cellSize) * 5;
   if (board[i] === 1) {
     send(`hit${i + 1}`);
   }
 };
-canvas.addEventListener("click", handleMoleClick);
 
-const handleStartButtonClick = () => {
-  send("ready");
-  startButton.disabled = true;
-};
-startButton.addEventListener("click", handleStartButtonClick);
+canvas.addEventListener("click", (event) => {
+  const rect = canvas.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+  hitMole(x, y);
+});
+startButton.addEventListener("click", connect);
