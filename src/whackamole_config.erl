@@ -36,7 +36,6 @@ getenv_int(Name, DefaultValue) ->
     Val = os:getenv(Name, DefaultValue),
     case string:to_integer(Val) of
         {IntVal, _Rest} -> 
-            io:format("here", []),
             IntVal;
         _ -> DefaultValue
     end.
