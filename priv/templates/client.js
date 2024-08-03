@@ -99,7 +99,12 @@ const enableStartButton = (enabled) => {
   if (enabled) {
     startButton.textContent = startButtonDefaultText;
   } else if (playersPerGame != undefined) {
-    startButton.textContent = `Searching for ${playersPerGame} players...`;
+    const playersToFind = playersPerGame - 1;
+    if (playersToFind == 1) {
+      startButton.textContent = `Searching for another player...`;
+    } else {
+      startButton.textContent = `Searching for ${playersToFind} players...`;
+    }
   } else {
     startButton.textContent = "Searching for players...";
   }
