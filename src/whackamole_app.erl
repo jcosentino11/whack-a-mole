@@ -12,6 +12,7 @@ start(_StartType, _StartArgs) ->
             {"/", cowboy_static, {priv_file, whackamole, "index.html"}},
             {"/static/[...]", whackamole_template, {priv_dir, whackamole, "templates"}},
             {"/icons/[...]", cowboy_static, {priv_dir, whackamole, "icons"}},
+            {"/info", whackamole_info_handler, []},
             {"/server", whackamole_server, []}
         ]}
     ]),
