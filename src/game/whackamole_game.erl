@@ -145,7 +145,7 @@ hit(#player{board = Board, player_id = Id, score = Score} = Player, PlayerId, In
 hit(Player, _PlayerId, _Index) ->
     Player.
 
-is_hit(Board, Index) when Index > length(Board); Index =< 1 ->
+is_hit(Board, Index) when Index > length(Board); Index < 1 ->
     false;
 is_hit(Board, Index) ->
     case lists:nth(Index, Board) of
