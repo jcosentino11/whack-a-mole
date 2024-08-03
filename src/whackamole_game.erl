@@ -25,6 +25,7 @@ game(
 ) ->
     receive
         stop ->
+            whackamole_metrics:emit_game_over(),
             ok;
         {add_player, Player, CallerPid} ->
             case add_player(Player, GameState) of
@@ -42,6 +43,7 @@ game(
             case State of
                 ready ->
                     UpdatedGameState = GameState#game{state = started},
+                    whackamole_metrics:emit_game_started(),
                     notify_ws(Players, UpdatedGameState),
                     erlang:send_after(Duration, self(), game_over),
                     erlang:send_after(UpdateInterval, self(), next_board),
@@ -65,12 +67,13 @@ game(
             #game{players = UpdatedPlayers} = UpdatedGameState = remove_player(PlayerId, GameState),
             notify_ws(Players, UpdatedGameState),
             case length(UpdatedPlayers) of
-                0 -> no_players_left;
+                0 -> 
+                    game_over(GameState),
+                    no_players_left;
                 _ -> game(UpdatedGameState)
             end;
         game_over ->
-            UpdatedGameState = GameState#game{state = over},
-            notify_ws(Players, UpdatedGameState);
+            game_over(GameState);
         next_board ->
             case State of
                 started ->
@@ -82,6 +85,14 @@ game(
                     game(GameState)
             end
     end.
+
+game_over(#game{players = Players, state = PrevState} = GameState) ->
+    UpdatedGameState = GameState#game{state = over},
+    if 
+        PrevState == started -> whackamole_metrics:emit_game_over();
+        true -> no_metrics
+    end,
+    notify_ws(Players, UpdatedGameState).
 
 add_player(
     #player{} = _Player,
