@@ -86,6 +86,7 @@ const hitMole = (x, y) => {
 };
 
 const enableStartButton = (enabled) => {
+  startButton.textContent = enabled ? "Ready!" : "Searching for players...";
   startButton.disabled = !enabled;
 }
 
