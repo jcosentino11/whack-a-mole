@@ -3,6 +3,7 @@ const ctx = canvas.getContext("2d");
 const cellSize = 100;
 
 const startButton = document.getElementById("startButton");
+const startButtonDefaultText = "Ready!";
 const playerScore = document.getElementById("playerScore");
 
 let board;
@@ -52,6 +53,9 @@ const onChangedState = (old, curr) => {
   if (curr == "over") {
       ws.close();
   }
+  if (curr == "started") {
+      startButton.textContent = "Game Active";
+  }
 };
 
 const render = () => {
@@ -86,7 +90,7 @@ const hitMole = (x, y) => {
 };
 
 const enableStartButton = (enabled) => {
-  startButton.textContent = enabled ? "Ready!" : "Searching for players...";
+  startButton.textContent = enabled ? startButtonDefaultText : "Searching for players...";
   startButton.disabled = !enabled;
 }
 
