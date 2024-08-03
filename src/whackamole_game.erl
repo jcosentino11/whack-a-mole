@@ -8,10 +8,10 @@ spawn_game() ->
     InitialState = #game{
         state = pending,
         players = [],
-        duration = ?GAME_DURATION_MILLIS,
-        required_player_count = ?PLAYERS_PER_GAME,
-        board_size = ?BOARD_SIZE,
-        board_update_interval_millis = ?BOARD_UPDATE_INTERVAL_MILLIS
+        duration = whackamole_config:game_duration_millis(),
+        required_player_count = whackamole_config:players_per_game(),
+        board_size = whackamole_config:board_size(),
+        board_update_interval_millis = whackamole_config:board_update_interval_millis()
     },
     spawn(?MODULE, game, [InitialState]).
 
@@ -35,7 +35,7 @@ game(
                     GameId = self(),
                     UpdatedGameState2 = UpdatedGameState#game{game_id = GameId},
                     notify_ws([UpdatedPlayer], {player_id, PlayerId}),
-                    notify_ws(Players, {game_id, GameId}),
+                    notify_ws([UpdatedPlayer], {game_id, GameId}),
                     CallerPid ! ok,
                     game(UpdatedGameState2)
             end;

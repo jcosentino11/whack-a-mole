@@ -14,7 +14,7 @@ template_args() ->
     #{"ws_proto" => template_args_ws_proto()}.
 
 template_args_ws_proto() ->
-    case os:getenv("APP_ENV") of
+    case whackamole_config:app_env() of
         "prod" -> "wss";
         _ -> "ws"
     end.

@@ -1,11 +1,5 @@
 -define(GAME_MANAGER, game_manager).
 
--define(GAME_DURATION_MILLIS, 10000).
--define(PLAYERS_PER_GAME, 2).
-% 5 x 5
--define(BOARD_SIZE, 25).
--define(BOARD_UPDATE_INTERVAL_MILLIS, 1000).
-
 -record(player, {websocket_id, player_id, board, score}).
 -record(game, {
     game_id,

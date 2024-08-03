@@ -6,13 +6,10 @@
 
 -record(ws_state, {websocket_id, player_id, game_id}).
 
--define(MAX_FRAME_SIZE, 500 + (?PLAYERS_PER_GAME * 2 * ?BOARD_SIZE)).
-% effectively used to close the ws connection if not enough players are found for a game
--define(IDLE_TIMEOUT_MILLIS, 5000).
-
 init(Req, State) ->
     {cowboy_websocket, Req, State, #{
-        max_frame_size => ?MAX_FRAME_SIZE, idle_timeout => ?IDLE_TIMEOUT_MILLIS
+        max_frame_size => whackamole_config:ws_max_frame_size(),
+        idle_timeout => whackamole_config:ws_idle_timeout_millis()
     }}.
 
 websocket_init(_State) ->
@@ -43,9 +40,11 @@ websocket_info(_Info, State) ->
 terminate(_Reason, _PartialReq, #ws_state{game_id = GameId, player_id = PlayerId}) when
     GameId /= undefined, PlayerId /= undefined
 ->
+    io:format("terminate: gameId: ~p, playerId: ~p~n", [GameId, PlayerId]),
     whackamole_manager:player_left(GameId, PlayerId),
     ok;
 terminate(_Reason, _PartialReq, _State) ->
+    io:format("terminate, nothing to do: state: ~p~n", [_State]),
     ok.
 
 encode(Game, PlayerId) ->
