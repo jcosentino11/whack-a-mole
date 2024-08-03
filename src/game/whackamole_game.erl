@@ -25,7 +25,7 @@ game(
 ) ->
     receive
         stop ->
-            whackamole_metrics:emit_game_over(),
+            game_over(GameState),
             ok;
         {add_player, Player, CallerPid} ->
             case add_player(Player, GameState) of
