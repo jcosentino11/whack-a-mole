@@ -34,7 +34,7 @@ get_num_ws_connected() ->
 get_num_active_games() ->
     get_counter(?ACTIVE_GAME_COUNT).
 
-inc_counter(Name) -> 
+inc_counter(Name) ->
     ets:update_counter(metrics, Name, {2, 1}).
 
 dec_counter(Name) ->

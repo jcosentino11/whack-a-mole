@@ -67,10 +67,11 @@ game(
             #game{players = UpdatedPlayers} = UpdatedGameState = remove_player(PlayerId, GameState),
             notify_ws(Players, UpdatedGameState),
             case length(UpdatedPlayers) of
-                0 -> 
+                0 ->
                     game_over(GameState),
                     no_players_left;
-                _ -> game(UpdatedGameState)
+                _ ->
+                    game(UpdatedGameState)
             end;
         game_over ->
             game_over(GameState);
@@ -88,7 +89,7 @@ game(
 
 game_over(#game{players = Players, state = PrevState} = GameState) ->
     UpdatedGameState = GameState#game{state = over},
-    if 
+    if
         PrevState == started -> whackamole_metrics:emit_game_over();
         true -> no_metrics
     end,
