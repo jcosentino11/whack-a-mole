@@ -2,6 +2,11 @@ const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const cellSize = 100;
 
+const infoEndpoint =
+  window.location.protocol + "//" + window.location.host + "/info";
+const activeGameCountElement = document.getElementById("activeGameCount");
+const websocketConnCountElement = document.getElementById("websocketConnCount");
+
 const startButton = document.getElementById("startButton");
 const startButtonDefaultText = "Ready!";
 const playerScore = document.getElementById("playerScore");
@@ -51,10 +56,10 @@ const updateState = (gameState) => {
 
 const onChangedState = (old, curr) => {
   if (curr == "over") {
-      ws.close();
+    ws.close();
   }
   if (curr == "started") {
-      startButton.textContent = "Game Active";
+    startButton.textContent = "Game Active";
   }
 };
 
@@ -90,9 +95,11 @@ const hitMole = (x, y) => {
 };
 
 const enableStartButton = (enabled) => {
-  startButton.textContent = enabled ? startButtonDefaultText : "Searching for players...";
+  startButton.textContent = enabled
+    ? startButtonDefaultText
+    : "Searching for players...";
   startButton.disabled = !enabled;
-}
+};
 
 canvas.addEventListener("click", (event) => {
   const rect = canvas.getBoundingClientRect();
@@ -101,3 +108,23 @@ canvas.addEventListener("click", (event) => {
   hitMole(x, y);
 });
 startButton.addEventListener("click", connect);
+
+const periodicallyUpdateGameInfo = () => {
+  const fetchInfo = () => {
+    fetch(infoEndpoint)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data) {
+          activeGameCountElement.textContent = data.active_game_count;
+          websocketConnCountElement.textContent = data.websocket_conn_count;
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching info:", error);
+      });
+  };
+  fetchInfo();
+  setInterval(fetchInfo, 5000);
+};
+
+periodicallyUpdateGameInfo();
