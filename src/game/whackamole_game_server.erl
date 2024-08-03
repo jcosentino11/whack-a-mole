@@ -1,6 +1,6 @@
--module(whackamole_server).
+-module(whackamole_game_server).
 
--include("whackamole.hrl").
+-include("./../whackamole.hrl").
 
 -export([init/2, websocket_init/1, websocket_handle/2, websocket_info/2, terminate/3]).
 
@@ -17,12 +17,12 @@ websocket_init(_State) ->
     {[], #ws_state{websocket_id = self()}, hibernate}.
 
 websocket_handle({text, <<"ready">>}, #ws_state{websocket_id = WebsocketId} = State) ->
-    whackamole_manager:player_ready(#player{websocket_id = WebsocketId}),
+    whackamole_game_manager:player_ready(#player{websocket_id = WebsocketId}),
     {[], State, hibernate};
 websocket_handle(
     {text, <<"hit", Index/binary>>}, #ws_state{game_id = GameId, player_id = PlayerId} = State
 ) ->
-    whackamole_manager:hit(GameId, PlayerId, list_to_integer(binary:bin_to_list(Index))),
+    whackamole_game_manager:hit(GameId, PlayerId, list_to_integer(binary:bin_to_list(Index))),
     {[], State};
 websocket_handle(_Data, State) ->
     {[], State, hibernate}.
@@ -39,7 +39,7 @@ terminate(_Reason, _PartialReq, #ws_state{game_id = GameId, player_id = PlayerId
     GameId /= undefined, PlayerId /= undefined
 ->
     whackamole_metrics:emit_ws_disconnected(),
-    whackamole_manager:player_left(GameId, PlayerId),
+    whackamole_game_manager:player_left(GameId, PlayerId),
     ok;
 terminate(_Reason, _PartialReq, _State) ->
     whackamole_metrics:emit_ws_disconnected(),
