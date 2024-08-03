@@ -19,6 +19,18 @@ const server = "{{ws_proto}}://" + window.location.host + "/server";
 let state;
 let ws;
 
+const startGame = () => {
+  resetState();
+  render();
+  connect();
+}
+
+const resetState = () => {
+  board = undefined;
+  score = 0;
+  state = undefined;
+}
+
 const connect = () => {
   if (ws) {
     ws.close();
@@ -48,7 +60,7 @@ const updateState = (gameState) => {
   board = gameState.player[0].board;
   score = gameState.player[0].score;
 
-  prevState = state;
+  const prevState = state;
   state = gameState.state;
   if (state != prevState) {
     onChangedState(prevState, state);
@@ -65,12 +77,17 @@ const onChangedState = (old, curr) => {
 };
 
 const render = () => {
+  clearCanvas();
   renderBoard(board);
-  renderScore();
+  renderScore(score);
 };
 
-const renderBoard = (board) => {
+const clearCanvas = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+const renderBoard = (board) => {
+  if (!board) return;
   for (let i = 0; i < board.length; i++) {
     const x = (i % 5) * cellSize;
     const y = Math.floor(i / 5) * cellSize;
@@ -80,12 +97,8 @@ const renderBoard = (board) => {
   }
 };
 
-const renderScore = () => {
-  ctx.font = "20px Arial";
-  ctx.fillStyle = "black";
-  ctx.textAlign = "left";
-  ctx.textBaseline = "top";
-  ctx.fillText(`Score: ${score}`, 10, 10);
+const renderScore = (score) => {
+  playerScore.textContent = score;
 };
 
 const hitMole = (x, y) => {
@@ -117,7 +130,7 @@ canvas.addEventListener("click", (event) => {
   const y = event.clientY - rect.top;
   hitMole(x, y);
 });
-startButton.addEventListener("click", connect);
+startButton.addEventListener("click", startGame);
 
 const periodicallyUpdateGameInfo = () => {
   const fetchInfo = () => {
