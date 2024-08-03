@@ -19,7 +19,8 @@ content_types_provided(Req, State) ->
 info_json(Req, State) ->
     Resp = #{
         websocket_conn_count => whackamole_metrics:get_num_ws_connected(),
-        active_game_count => whackamole_metrics:get_num_active_games()
+        active_game_count => whackamole_metrics:get_num_active_games(),
+        players_per_game => whackamole_config:players_per_game()
     },
     Body = jiffy:encode(Resp),
     {Body, Req, State}.

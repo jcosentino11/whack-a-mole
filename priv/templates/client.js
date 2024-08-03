@@ -6,6 +6,7 @@ const infoEndpoint =
   window.location.protocol + "//" + window.location.host + "/info";
 const activeGameCountElement = document.getElementById("activeGameCount");
 const websocketConnCountElement = document.getElementById("websocketConnCount");
+let playersPerGame = undefined;
 
 const startButton = document.getElementById("startButton");
 const startButtonDefaultText = "Ready!";
@@ -95,9 +96,13 @@ const hitMole = (x, y) => {
 };
 
 const enableStartButton = (enabled) => {
-  startButton.textContent = enabled
-    ? startButtonDefaultText
-    : "Searching for players...";
+  if (enabled) {
+    startButton.textContent = startButtonDefaultText;
+  } else if (playersPerGame != undefined) {
+    startButton.textContent = `Searching for ${playersPerGame} players...`;
+  } else {
+    startButton.textContent = "Searching for players...";
+  }
   startButton.disabled = !enabled;
 };
 
@@ -117,6 +122,7 @@ const periodicallyUpdateGameInfo = () => {
         if (data) {
           activeGameCountElement.textContent = data.active_game_count;
           websocketConnCountElement.textContent = data.websocket_conn_count;
+          playersPerGame = data.players_per_game;
         }
       })
       .catch((error) => {
