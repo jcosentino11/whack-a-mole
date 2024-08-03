@@ -1,6 +1,6 @@
 -module(whackamole_server).
 
--include("whackamole_constants.hrl").
+-include("whackamole.hrl").
 
 -export([init/2, websocket_init/1, websocket_handle/2, websocket_info/2, terminate/3]).
 

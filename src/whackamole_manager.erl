@@ -1,6 +1,6 @@
 -module(whackamole_manager).
 
--include("whackamole_constants.hrl").
+-include("whackamole.hrl").
 
 -export([player_ready/1, hit/3, player_left/2]).
 -export([spawn_game_manager/0, game_manager/1]).

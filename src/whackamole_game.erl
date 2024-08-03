@@ -1,6 +1,6 @@
 -module(whackamole_game).
 
--include("whackamole_constants.hrl").
+-include("whackamole.hrl").
 
 -export([spawn_game/0, game/1]).
 
