@@ -34,8 +34,7 @@ game(
                 {#player{player_id = PlayerId} = UpdatedPlayer, UpdatedGameState} ->
                     GameId = self(),
                     UpdatedGameState2 = UpdatedGameState#game{game_id = GameId},
-                    notify_ws([UpdatedPlayer], {player_id, PlayerId}),
-                    notify_ws([UpdatedPlayer], {game_id, GameId}),
+                    notify_ws([UpdatedPlayer], {player_added, PlayerId, GameId}),
                     CallerPid ! ok,
                     game(UpdatedGameState2)
             end;

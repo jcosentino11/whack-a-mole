@@ -26,11 +26,8 @@ websocket_handle(
 websocket_handle(_Data, State) ->
     {[], State, hibernate}.
 
-websocket_info({player_id, PlayerId}, State) ->
-    UpdatedState = State#ws_state{player_id = PlayerId},
-    {[], UpdatedState};
-websocket_info({game_id, GameId}, State) ->
-    UpdatedState = State#ws_state{game_id = GameId},
+websocket_info({player_added, PlayerId, GameId}, State) ->
+    UpdatedState = State#ws_state{player_id = PlayerId, game_id = GameId},
     {[], UpdatedState};
 websocket_info(#game{} = Game, #ws_state{player_id = PlayerId} = State) ->
     {[{text, encode(Game, PlayerId)}], State};
