@@ -40,11 +40,9 @@ websocket_info(_Info, State) ->
 terminate(_Reason, _PartialReq, #ws_state{game_id = GameId, player_id = PlayerId}) when
     GameId /= undefined, PlayerId /= undefined
 ->
-    io:format("terminate: gameId: ~p, playerId: ~p~n", [GameId, PlayerId]),
     whackamole_manager:player_left(GameId, PlayerId),
     ok;
 terminate(_Reason, _PartialReq, _State) ->
-    io:format("terminate, nothing to do: state: ~p~n", [_State]),
     ok.
 
 encode(Game, PlayerId) ->
