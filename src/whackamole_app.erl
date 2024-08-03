@@ -5,6 +5,7 @@
 -export([start/2, stop/1]).
 
 start(_StartType, _StartArgs) ->
+    whackamole_metrics:init(),
     whackamole_manager:spawn_game_manager(),
     Dispatch = cowboy_router:compile([
         {'_', [

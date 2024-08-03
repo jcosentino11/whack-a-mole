@@ -13,6 +13,7 @@ init(Req, State) ->
     }}.
 
 websocket_init(_State) ->
+    whackamole_metrics:emit_ws_connected(),
     {[], #ws_state{websocket_id = self()}, hibernate}.
 
 websocket_handle({text, <<"ready">>}, #ws_state{websocket_id = WebsocketId} = State) ->
@@ -37,9 +38,11 @@ websocket_info(_Info, State) ->
 terminate(_Reason, _PartialReq, #ws_state{game_id = GameId, player_id = PlayerId}) when
     GameId /= undefined, PlayerId /= undefined
 ->
+    whackamole_metrics:emit_ws_disconnected(),
     whackamole_manager:player_left(GameId, PlayerId),
     ok;
 terminate(_Reason, _PartialReq, _State) ->
+    whackamole_metrics:emit_ws_disconnected(),
     ok.
 
 encode(Game, PlayerId) ->
