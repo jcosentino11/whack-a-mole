@@ -9,7 +9,6 @@ const websocketConnCountElement = document.getElementById("websocketConnCount");
 let playersPerGame = undefined;
 
 const startButton = document.getElementById("startButton");
-const startButtonDefaultText = "Ready!";
 const playerScore = document.getElementById("playerScore");
 
 let board;
@@ -23,7 +22,7 @@ const startGame = () => {
   resetState();
   render();
   if (send("ready")) {
-    enableStartButton(false);
+    enableStartButton(false, "Searching for players");
   }
   // TODO message on failure. or better yet, don't enable start button while disconnected
 };
@@ -46,8 +45,12 @@ const connect = () => {
       updateState(gameState);
       render();
     };
+    ws.onopen = (_event) => {
+      enableStartButton(true, "Ready!");
+    };
     ws.onclose = (_event) => {
       // handle connection loss
+      enableStartButton(false, "Waiting for connection...");
       connect();
     };
   }
@@ -76,10 +79,10 @@ const updateState = (gameState) => {
 
 const onChangedState = (old, curr) => {
   if (curr == "over") {
-    enableStartButton(true);
+    enableStartButton(true, "Play Again");
   }
   if (curr == "started") {
-    startButton.textContent = "Game Active";
+    enableStartButton(false, "Playing...");
   }
 };
 
@@ -115,20 +118,9 @@ const hitMole = (x, y) => {
   }
 };
 
-const enableStartButton = (enabled) => {
-  if (enabled) {
-    startButton.textContent = startButtonDefaultText;
-  } else if (playersPerGame != undefined) {
-    const playersToFind = playersPerGame - 1;
-    if (playersToFind == 1) {
-      startButton.textContent = `Searching for another player...`;
-    } else {
-      startButton.textContent = `Searching for ${playersToFind} players...`;
-    }
-  } else {
-    startButton.textContent = "Searching for players...";
-  }
+const enableStartButton = (enabled, text) => {
   startButton.disabled = !enabled;
+  startButton.textContent = text;
 };
 
 const periodicallyUpdateGameInfo = () => {
@@ -159,6 +151,7 @@ const main = () => {
   });
   startButton.addEventListener("click", startGame);
   periodicallyUpdateGameInfo();
+  enableStartButton(false, "Waiting for connection...");
   connect();
 };
 
