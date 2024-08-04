@@ -2,11 +2,8 @@ const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const cellSize = 100;
 
-const infoEndpoint =
-  window.location.protocol + "//" + window.location.host + "/info";
 const activeGameCountElement = document.getElementById("activeGameCount");
 const websocketConnCountElement = document.getElementById("websocketConnCount");
-let playersPerGame = undefined;
 
 const startButton = document.getElementById("startButton");
 const playerScore = document.getElementById("playerScore");
@@ -40,9 +37,14 @@ const connect = () => {
   ) {
     ws = new WebSocket(server);
     ws.onmessage = (event) => {
-      const gameState = JSON.parse(event.data);
-      updateState(gameState);
-      render();
+      const message = JSON.parse(event.data);
+      if (message.type == "game") {
+        updateState(message.body);
+        render();
+      } else if (message.type == "info") {
+        activeGameCountElement.textContent = message.body.active_game_count;
+        websocketConnCountElement.textContent = message.body.websocket_conn_count;
+      }
     };
     ws.onopen = (_event) => {
       enableStartButton(true, "Ready!");
@@ -52,6 +54,13 @@ const connect = () => {
       connect();
     };
   }
+};
+
+const pingLoop = () => {
+  const ping = () => {
+    send("ping")
+  };
+  setInterval(ping, 1000);
 };
 
 const send = (message) => {
@@ -121,25 +130,6 @@ const enableStartButton = (enabled, text) => {
   startButton.textContent = text;
 };
 
-const periodicallyUpdateGameInfo = () => {
-  const fetchInfo = () => {
-    fetch(infoEndpoint)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data) {
-          activeGameCountElement.textContent = data.active_game_count;
-          websocketConnCountElement.textContent = data.websocket_conn_count;
-          playersPerGame = data.players_per_game;
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching info:", error);
-      });
-  };
-  fetchInfo();
-  setInterval(fetchInfo, 5000);
-};
-
 const main = () => {
   canvas.addEventListener("click", (event) => {
     const rect = canvas.getBoundingClientRect();
@@ -148,8 +138,8 @@ const main = () => {
     hitMole(x, y);
   });
   startButton.addEventListener("click", startGame);
-  periodicallyUpdateGameInfo();
   enableStartButton(false, "Waiting for connection...");
+  pingLoop();
   connect();
 };
 
