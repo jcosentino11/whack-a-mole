@@ -33,7 +33,6 @@ ws_max_frame_size() ->
 
 getenv_int(Name, DefaultValue) ->
     Val = os:getenv(Name, DefaultValue),
-    io:format("name: ~p, val: ~p, default: ~p~n", [Name, Val, DefaultValue]),
     case string:to_integer(Val) of
         {error, _} -> DefaultValue;
         {IntVal, _Rest} -> 
