@@ -24,7 +24,6 @@ const startGame = () => {
   if (send("ready")) {
     enableStartButton(false, "Searching for players");
   }
-  // TODO message on failure. or better yet, don't enable start button while disconnected
 };
 
 const resetState = () => {
@@ -49,7 +48,6 @@ const connect = () => {
       enableStartButton(true, "Ready!");
     };
     ws.onclose = (_event) => {
-      // handle connection loss
       enableStartButton(false, "Waiting for connection...");
       connect();
     };
