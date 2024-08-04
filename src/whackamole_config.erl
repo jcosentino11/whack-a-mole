@@ -25,7 +25,6 @@ board_size() ->
 board_update_interval_millis() ->
     getenv_int("BOARD_UPDATE_INTERVAL_MILLIS", 1000).
 
-% effectively used to close the ws connection if not enough players are found for a game
 ws_idle_timeout_millis() ->
     getenv_int("WS_IDLE_TIMEOUT_MILLIS", 5000).
 
@@ -34,8 +33,9 @@ ws_max_frame_size() ->
 
 getenv_int(Name, DefaultValue) ->
     Val = os:getenv(Name, DefaultValue),
+    io:format("name: ~p, val: ~p, default: ~p~n", [Name, Val, DefaultValue]),
     case string:to_integer(Val) of
+        {error, _} -> DefaultValue;
         {IntVal, _Rest} -> 
-            IntVal;
-        _ -> DefaultValue
+            IntVal
     end.

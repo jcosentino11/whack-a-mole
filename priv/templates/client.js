@@ -22,38 +22,45 @@ let ws;
 const startGame = () => {
   resetState();
   render();
-  connect();
-}
+  if (send("ready")) {
+    enableStartButton(false);
+  }
+  // TODO message on failure. or better yet, don't enable start button while disconnected
+};
 
 const resetState = () => {
   board = undefined;
   score = 0;
   state = undefined;
-}
+};
 
 const connect = () => {
-  if (ws) {
-    ws.close();
+  if (
+    !ws ||
+    ws.readyState == WebSocket.CLOSED ||
+    ws.readyState == WebSocket.CLOSING
+  ) {
+    ws = new WebSocket(server);
+    ws.onmessage = (event) => {
+      const gameState = JSON.parse(event.data);
+      updateState(gameState);
+      render();
+    };
+    ws.onclose = (_event) => {
+      // handle connection loss
+      connect();
+    };
   }
-  ws = new WebSocket(server);
-  ws.onmessage = (event) => {
-    const gameState = JSON.parse(event.data);
-    updateState(gameState);
-    render();
-  };
-  ws.onopen = (_event) => {
-    send("ready");
-    enableStartButton(false);
-  };
-  ws.onclose = (_event) => {
-    enableStartButton(true);
-  };
 };
 
 const send = (message) => {
   if (message && ws && ws.readyState == WebSocket.OPEN) {
-    ws.send(message);
+    try {
+      ws.send(message);
+      return true;
+    } catch (ignore) {}
   }
+  return false;
 };
 
 const updateState = (gameState) => {
@@ -69,7 +76,7 @@ const updateState = (gameState) => {
 
 const onChangedState = (old, curr) => {
   if (curr == "over") {
-    ws.close();
+    enableStartButton(true);
   }
   if (curr == "started") {
     startButton.textContent = "Game Active";
@@ -84,7 +91,7 @@ const render = () => {
 
 const clearCanvas = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
+};
 
 const renderBoard = (board) => {
   if (!board) return;
@@ -124,14 +131,6 @@ const enableStartButton = (enabled) => {
   startButton.disabled = !enabled;
 };
 
-canvas.addEventListener("click", (event) => {
-  const rect = canvas.getBoundingClientRect();
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
-  hitMole(x, y);
-});
-startButton.addEventListener("click", startGame);
-
 const periodicallyUpdateGameInfo = () => {
   const fetchInfo = () => {
     fetch(infoEndpoint)
@@ -151,4 +150,16 @@ const periodicallyUpdateGameInfo = () => {
   setInterval(fetchInfo, 5000);
 };
 
-periodicallyUpdateGameInfo();
+const main = () => {
+  canvas.addEventListener("click", (event) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    hitMole(x, y);
+  });
+  startButton.addEventListener("click", startGame);
+  periodicallyUpdateGameInfo();
+  connect();
+};
+
+main();
