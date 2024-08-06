@@ -77,22 +77,17 @@ class State {
 
 class Renderer {
   constructor(
-    state,
-    canvasId,
-    activeGameCountId,
-    websocketConnCountId,
-    startButtonId,
-    playerScoreId
+    state
   ) {
     this.state = state;
-    this.canvas = document.getElementById(canvasId);
+    this.canvas = document.getElementById("gameCanvas");
     this.ctx = this.canvas.getContext("2d");
     this.cellSize = 100;
-    this.activeGameCountElement = document.getElementById(activeGameCountId);
+    this.activeGameCountElement = document.getElementById("activeGameCount");
     this.websocketConnCountElement =
-      document.getElementById(websocketConnCountId);
-    this.startButton = document.getElementById(startButtonId);
-    this.playerScore = document.getElementById(playerScoreId);
+      document.getElementById("websocketConnCount");
+    this.startButton = document.getElementById("startButton");
+    this.playerScore = document.getElementById("playerScore");
 
     // wire rendering to state changes.
     // only parts that have changed will be rerendered.
@@ -389,13 +384,6 @@ const state = new State();
 const connection = new Connection(
   "{{ws_proto}}://" + window.location.host + "/server"
 );
-const renderer = new Renderer(
-  state,
-  "gameCanvas",
-  "activeGameCount",
-  "websocketConnCount",
-  "startButton",
-  "playerScore"
-);
+const renderer = new Renderer(state);
 const game = new Game(state, connection, renderer);
 window.addEventListener("load", () => game.connect());
