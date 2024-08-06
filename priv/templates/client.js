@@ -224,14 +224,13 @@ class Renderer {
 class Connection {
   constructor(url) {
     this.url = url;
+    this.ws = null;
+    this.keepAliveIntervalId = null;
     this.onMessageHandlers = [];
     this.onOpenHandlers = [];
     this.onCloseHandlers = [];
-    window.addEventListener("beforeunload", () => {
-      if (this.ws) {
-        this.ws.close();
-      }
-    });
+
+    window.addEventListener("beforeunload", () => this.close());
   }
 
   registerOnMessage(func) {
@@ -249,11 +248,9 @@ class Connection {
   connect() {
     if (
       this.ws &&
-      (this.ws.readyState == WebSocket.CLOSED ||
-        this.ws.readyState == WebSocket.CLOSING)
+      [WebSocket.CLOSED, WebSocket.CLOSING].includes(this.ws.readyState)
     ) {
-      this.ws.close();
-      this.ws = undefined;
+      this.close();
     }
     if (!this.ws) {
       this.ws = new WebSocket(this.url);
@@ -272,7 +269,7 @@ class Connection {
   }
 
   send(message) {
-    if (message && this.ws && this.ws.readyState == WebSocket.OPEN) {
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       try {
         this.ws.send(message);
         return true;
@@ -281,12 +278,17 @@ class Connection {
     return false;
   }
 
+  close() {
+    if (this.ws) {
+      this.ws.close();
+      this.ws = null;
+      clearInterval(this.keepAliveIntervalId);
+    }
+  }
+
   #keepAlive() {
     clearInterval(this.keepAliveIntervalId);
-    const ping = () => {
-      this.send("ping");
-    };
-    this.keepAliveIntervalId = setInterval(() => ping(), 1000); // TODO template
+    this.keepAliveIntervalId = setInterval(() => this.send("ping"), 1000); // TODO template
   }
 
   #invokeHandlers(handlers, arg) {
