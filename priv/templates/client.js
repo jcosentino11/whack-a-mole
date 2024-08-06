@@ -19,6 +19,7 @@ class State {
     },
     BOARD: { name: "BOARD", default: [] },
     SCORE: { name: "SCORE", default: 0 },
+    PLAYERS: { name: "PLAYERS", default: [] },
     ACTIVE_GAME_COUNT: { name: "ACTIVE_GAME_COUNT", default: 0 },
     WEBSOCKET_CONN_COUNT: { name: "WEBSOCKET_CONN_COUNT", default: 0 },
   });
@@ -76,9 +77,7 @@ class State {
 }
 
 class Renderer {
-  constructor(
-    state
-  ) {
+  constructor(state) {
     this.state = state;
     this.canvas = document.getElementById("gameCanvas");
     this.ctx = this.canvas.getContext("2d");
@@ -88,6 +87,7 @@ class Renderer {
       document.getElementById("websocketConnCount");
     this.startButton = document.getElementById("startButton");
     this.playerScore = document.getElementById("playerScore");
+    this.winner = document.getElementById("winner");
 
     // wire rendering to state changes.
     // only parts that have changed will be rerendered.
@@ -95,10 +95,14 @@ class Renderer {
     this.state.registerOnChange(State.Properties.CLIENT_GAME_STATE.name, () => {
       this.renderStartButton();
       this.renderInfo();
+      this.renderWinner();
     });
-    this.state.registerOnChange(State.Properties.BOARD.name, () =>
-      this.renderBoard()
-    );
+    this.state.registerOnChange(State.Properties.PLAYERS.name, () => {
+      this.renderWinner();
+    });
+    this.state.registerOnChange(State.Properties.BOARD.name, () => {
+      this.renderBoard();
+    });
     this.state.registerOnChange(
       State.Properties.WEBSOCKET_CONN_COUNT.name,
       () => this.renderInfo()
@@ -205,6 +209,46 @@ class Renderer {
     this.playerScore.textContent = this.state.getProperty(
       State.Properties.SCORE.name
     );
+  }
+
+  renderWinner() {
+    const clientGameState = this.state.getProperty(
+      State.Properties.CLIENT_GAME_STATE.name
+    );
+
+    const winnerText = () => {
+      const players = this.state.getProperty(State.Properties.PLAYERS.name);
+      if (players.length == 0) {
+        return "WINNER!";
+      }
+      const bestOpponentScore = players.reduce(
+        (maxScore, player) => Math.max(maxScore, player.score),
+        players[0].score
+      );
+      const playerScore = this.state.getProperty(State.Properties.SCORE.name);
+      if (playerScore == bestOpponentScore) {
+        return "IT'S A TIE!";
+      }
+      if (playerScore > bestOpponentScore) {
+        return "YOU WON!";
+      }
+      return "BETTER LUCK NEXT TIME...";
+    };
+
+    const text = (() => {
+      switch (clientGameState) {
+        case ClientGameState.OVER:
+          return winnerText();
+        case ClientGameState.SEARCHING:
+          return "";
+        default:
+          null;
+      }
+    })();
+
+    if (text !== null) {
+      this.winner.textContent = text;
+    }
   }
 
   #moleAt(x, y) {
@@ -355,6 +399,7 @@ class Game {
   #onGameUpdateReceived(game) {
     this.state.setProperty(State.Properties.BOARD.name, game.player[0].board);
     this.state.setProperty(State.Properties.SCORE.name, game.player[0].score);
+    this.state.setProperty(State.Properties.PLAYERS.name, game.players);
     if (game.state == "over") {
       this.state.setProperty(
         State.Properties.CLIENT_GAME_STATE.name,
