@@ -88,6 +88,7 @@ class Renderer {
     this.startButton = document.getElementById("startButton");
     this.playerScore = document.getElementById("playerScore");
     this.winner = document.getElementById("winner");
+    this.opponentScores = document.getElementById("opponentScores");
 
     // wire rendering to state changes.
     // only parts that have changed will be rerendered.
@@ -96,9 +97,11 @@ class Renderer {
       this.renderStartButton();
       this.renderInfo();
       this.renderWinner();
+      this.renderOpponentScores();
     });
     this.state.registerOnChange(State.Properties.PLAYERS.name, () => {
       this.renderWinner();
+      this.renderOpponentScores();
     });
     this.state.registerOnChange(State.Properties.BOARD.name, () => {
       this.renderBoard();
@@ -209,6 +212,20 @@ class Renderer {
     this.playerScore.textContent = this.state.getProperty(
       State.Properties.SCORE.name
     );
+  }
+
+  renderOpponentScores() {
+    const clientGameState = this.state.getProperty(
+      State.Properties.CLIENT_GAME_STATE.name
+    );
+    const players = this.state.getProperty(State.Properties.PLAYERS.name);
+
+    if (clientGameState == ClientGameState.SEARCHING) {
+      this.opponentScores.textContent = "N/A";
+    } else if (players.length) {
+      const scores = players.map(player => player.score);
+      this.opponentScores.textContent = scores.join(", ");
+    }
   }
 
   renderWinner() {
