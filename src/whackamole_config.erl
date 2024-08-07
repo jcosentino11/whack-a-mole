@@ -1,6 +1,7 @@
 -module(whackamole_config).
 
 -export([
+    port/0,
     app_env/0,
     game_duration_millis/0,
     players_per_game/0,
@@ -9,6 +10,9 @@
     ws_idle_timeout_millis/0,
     ws_max_frame_size/0
 ]).
+
+port() ->
+    getenv_int("PORT", 8080).
 
 app_env() ->
     os:getenv("APP_ENV", "dev").

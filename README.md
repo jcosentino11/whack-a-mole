@@ -24,6 +24,7 @@ make start
 
 Configuration is done via environment variables:
 
+* `PORT`: The application port, defaults to `8080`.
 * `APP_ENV`: The environment the application is deployed in, defaults to `dev`.
 * `GAME_DURATION_MILLIS`: How long a game of whack-a-mole lasts, defaults to `10000`.
 * `PLAYERS_PER_GAME`: How many players are part of a whack-a-mole game, defaults to `2`.
