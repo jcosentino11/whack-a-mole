@@ -64,6 +64,7 @@ game(
                     game(GameState)
             end;
         {player_left, PlayerId} ->
+            io:format("player left. id: ~p~n", [PlayerId]),
             #game{players = UpdatedPlayers} = UpdatedGameState = remove_player(PlayerId, GameState),
             notify_ws(Players, UpdatedGameState),
             case length(UpdatedPlayers) of
@@ -108,6 +109,7 @@ add_player(
 add_player(
     #player{} = Player,
     #game{
+        game_id = GameId,
         players = Players,
         required_player_count = RequiredPlayerCount,
         board_size = BoardSize,
@@ -124,6 +126,7 @@ add_player(
             _ ->
                 State
         end,
+    io:format("player added. game: ~p, state: ~p~n", [GameId, UpdatedState]),
     UpdatedGame = Game#game{players = UpdatedPlayers, state = UpdatedState},
     {UpdatedPlayer, UpdatedGame}.
 

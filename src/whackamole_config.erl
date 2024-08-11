@@ -21,7 +21,7 @@ game_duration_millis() ->
     getenv_int("GAME_DURATION_MILLIS", 10000).
 
 players_per_game() ->
-    getenv_int("PLAYERS_PER_GAME", 2).
+    getenv_int("PLAYERS_PER_GAME", 10).
 
 board_size() ->
     getenv_int("BOARD_SIZE", 25).
