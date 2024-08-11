@@ -25,8 +25,11 @@ websocket_handle(
 ) ->
     whackamole_game_manager:hit(GameId, PlayerId, list_to_integer(binary:bin_to_list(Index))),
     {[], State};
+websocket_handle({text, <<"ping">>}, State) ->
+    {[], State, hibernate};
 websocket_handle(_Data, State) ->
-    {[], State, hibernate}.
+    % kick clients that send bad requests
+    {stop, State}.
 
 websocket_info(info, State) ->
     erlang:send_after(1000, self(), info),
