@@ -7,10 +7,17 @@
 -record(ws_state, {websocket_id, player_id, game_id}).
 
 init(Req, State) ->
-    {cowboy_websocket, Req, State, #{
-        max_frame_size => whackamole_config:ws_max_frame_size(),
-        idle_timeout => whackamole_config:ws_idle_timeout_millis()
-    }}.
+    NumConn = whackamole_metrics:get_num_ws_connected(),
+    MaxConn = whackamole_config:max_players_allowed(),
+    if
+        NumConn >= MaxConn ->
+            cowboy_req:reply(403, Req);
+        true ->
+            {cowboy_websocket, Req, State, #{
+                max_frame_size => whackamole_config:ws_max_frame_size(),
+                idle_timeout => whackamole_config:ws_idle_timeout_millis()
+            }}
+    end.
 
 websocket_init(_State) ->
     whackamole_metrics:emit_ws_connected(),
