@@ -223,7 +223,7 @@ class Renderer {
     if (clientGameState == ClientGameState.SEARCHING) {
       this.opponentScores.textContent = "N/A";
     } else if (players.length) {
-      const scores = players.map(player => player.score);
+      const scores = players.map((player) => player.score);
       this.opponentScores.textContent = scores.join(", ");
     }
   }
@@ -394,6 +394,11 @@ class Game {
     });
 
     this.renderer.registerOnMoleClick((moleId) => {
+      const board = [...this.state.getProperty(State.Properties.BOARD.name)];
+      board[moleId - 1] = 0;
+      this.state.setProperty(State.Properties.BOARD.name, board);
+      const score = this.state.getProperty(State.Properties.SCORE.name);
+      this.state.setProperty(State.Properties.SCORE.name, score + 1);
       this.connection.send(`hit${moleId}`);
     });
   }

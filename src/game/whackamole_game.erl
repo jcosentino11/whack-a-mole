@@ -57,8 +57,6 @@ game(
             case State of
                 started ->
                     UpdatedGameState = hit(GameState, PlayerId, Index),
-                    % TODO be smarter about notifying, this is a lot of messages flying around
-                    notify_ws(Players, UpdatedGameState),
                     game(UpdatedGameState);
                 _ ->
                     game(GameState)

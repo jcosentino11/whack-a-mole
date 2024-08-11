@@ -18,7 +18,7 @@ app_env() ->
     os:getenv("APP_ENV", "dev").
 
 game_duration_millis() ->
-    getenv_int("GAME_DURATION_MILLIS", 10000).
+    getenv_int("GAME_DURATION_MILLIS", 20000).
 
 players_per_game() ->
     getenv_int("PLAYERS_PER_GAME", 10).
@@ -27,7 +27,7 @@ board_size() ->
     getenv_int("BOARD_SIZE", 25).
 
 board_update_interval_millis() ->
-    getenv_int("BOARD_UPDATE_INTERVAL_MILLIS", 1000).
+    getenv_int("BOARD_UPDATE_INTERVAL_MILLIS", 3000).
 
 ws_idle_timeout_millis() ->
     getenv_int("WS_IDLE_TIMEOUT_MILLIS", 5000).
