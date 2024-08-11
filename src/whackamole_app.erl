@@ -18,7 +18,8 @@ start(_StartType, _StartArgs) ->
     {ok, _} = cowboy:start_clear(http, [{port, whackamole_config:port()}], #{
         env => #{dispatch => Dispatch}
     }),
-    whackamole_sup:start_link().
+    whackamole_bot:spawn_bot(),
+    {ok, self()}.
 
 stop(_State) ->
     ok.
