@@ -8,6 +8,7 @@
         stdlib,
         crypto,
         cowboy,
+        gun,
         jiffy,
         bbmustache
     ]},
