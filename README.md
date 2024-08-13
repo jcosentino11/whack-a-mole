@@ -5,8 +5,7 @@
 
 An online multiplayer game of whack-a-mole.
 
-https://github.com/user-attachments/assets/a7e3faf7-b0d3-4c8e-ac06-47e9b143093b
-
+[Demo Video](https://github.com/user-attachments/assets/a7e3faf7-b0d3-4c8e-ac06-47e9b143093b)
 
 ## Running Locally
 
