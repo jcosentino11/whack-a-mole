@@ -1,6 +1,7 @@
-# Whack-a-Mole (work in progress)
+# Whack-a-Mole
 
 [![Play Whack-a-Mole](https://badgen.net/static/Play/Whack-a-Mole/green)](https://whackamole.josephcosentino.me)
+[![Version](https://badgen.net/static/version/0/purple)]()
 
 An online multiplayer game of whack-a-mole.
 
@@ -30,5 +31,11 @@ Configuration is done via environment variables:
 * `PLAYERS_PER_GAME`: How many players are part of a whack-a-mole game, defaults to `2`.
 * `BOARD_SIZE`: How many moles to have in a board, defaults to `25`.
 * `BOARD_UPDATE_INTERVAL_MILLIS`: How often the moles should move around, defaults to `1000`.
+* `MAX_PLAYERS_ALLOWED`: How many players can be connected at once, defaults to `1000`.
 * `WS_IDLE_TIMEOUT_MILLIS`: How long the websocket connection can remain idle before the server terminates it, defaults to `5000`.
 * `WS_MAX_FRAME_SIZE`: How large a websocket frame is allowed to be, defaults to [this formula](https://github.com/jcosentino11/whack-a-mole/blob/28bf662dfb84906f27b9d080009d52ceee0e2179/src/whackamole_config.erl#L32).
+
+## Future Work
+
+* Better matchmaking (e.g. create your own lobby, set game options)
+* Make the UI look good, esp. for mobile
