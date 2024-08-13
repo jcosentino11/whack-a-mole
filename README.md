@@ -5,7 +5,7 @@
 
 An online multiplayer game of whack-a-mole.
 
-<img width="300" alt="Whack-a-Mole Screenshot" src="https://github.com/user-attachments/assets/d6fc7da5-af91-48df-a106-71e00f4c34fd">
+https://github.com/user-attachments/assets/a7e3faf7-b0d3-4c8e-ac06-47e9b143093b
 
 
 ## Running Locally
