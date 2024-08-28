@@ -1,6 +1,4 @@
 # Whack-a-Mole
-
-[![Play Whack-a-Mole](https://badgen.net/static/Play/Whack-a-Mole/green)](https://whackamole.josephcosentino.me)
 [![Version](https://badgen.net/static/version/0/purple)]()
 
 An online multiplayer game of whack-a-mole.
