@@ -6,7 +6,6 @@ An online multiplayer game of whack-a-mole.
 
 ## Play it!
 
-Start the game,
 ```
 docker run --rm -it -p 8080:8080 jcosentino11/whack-a-mole:latest
 ```
