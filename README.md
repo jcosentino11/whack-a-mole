@@ -4,18 +4,14 @@ An online multiplayer game of whack-a-mole.
 
 [Demo Video](https://github.com/user-attachments/assets/a7e3faf7-b0d3-4c8e-ac06-47e9b143093b)
 
-## Running Locally
+## Play it!
 
-The easiest way to spin up the game is to run
+Start the game,
 ```
-make start-docker
+docker run --rm -it -p 8080:8080 jcosentino11/whack-a-mole:latest
 ```
-then navigate to `http://localhost:8080/`. 
+then go to `http://localhost:8080/`.
 
-If you don't want to use Docker and have Erlang/Rebar on your system, run
-```
-make start
-```
 
 ## Configuration
 
