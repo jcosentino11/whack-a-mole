@@ -1,5 +1,4 @@
 # Whack-a-Mole
-[![Version](https://badgen.net/static/version/0/purple)]()
 
 An online multiplayer game of whack-a-mole.
 
