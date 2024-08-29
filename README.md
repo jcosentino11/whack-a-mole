@@ -2,7 +2,7 @@
 
 An online multiplayer game of whack-a-mole.
 
-<img src="https://github.com/user-attachments/assets/8de88e94-3b9b-4157-a7f7-53903ed4f8d8" width="500">
+<img src="https://github.com/user-attachments/assets/4933fa46-8b6e-44f1-9af8-dc89c0818945" width="500">
 
 ## Play it!
 
