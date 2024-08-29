@@ -7,7 +7,7 @@ An online multiplayer game of whack-a-mole.
 ## Play it!
 
 ```
-docker run --rm -it -p 8080:8080 jcosentino11/whack-a-mole:latest
+docker run -p 8080:8080 jcosentino11/whack-a-mole:latest
 ```
 then go to `http://localhost:8080/`.
 
